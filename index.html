@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Generator Undangan Rapat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f3f9e8, #d5f7d0);
+      margin: 0;
+      padding: 20px;
+      color: #3c3c3c;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .header-image {
+      width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #689f38;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #cddc39;
+      font-size: 15px;
+    }
+
+    .checkboxes {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .checkboxes label {
+      font-weight: normal;
+    }
+
+    button {
+      margin-top: 25px;
+      background-color: #aed581;
+      color: #ffffff;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #8bc34a;
+    }
+
+    #output, #preview {
+      background-color: #f9fbe7;
+      border-left: 6px solid #c5e1a5;
+      padding: 20px;
+      margin-top: 30px;
+      white-space: pre-wrap;
+      border-radius: 8px;
+      word-wrap: break-word; /* Ensure long words wrap */
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 30px;
+      color: #777;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%; /* Could be more or less, depending on screen size */
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://cdn-icons-png.flaticon.com/512/1603/1603851.png" alt="Undangan Icon" class="header-image">
+    <h1>📬 Prompt Generator Undangan Rapat</h1>
+
+    <label for="organisasi">Nama Organisasi</label>
+    <input type="text" id="organisasi" placeholder="Contoh: HMJTI Universitas Sari Mulia" />
+
+    <label for="tanggal">Hari & Tanggal</label>
+    <input type="text" id="tanggal" placeholder="Contoh: Kamis, 20 Juli 2025" />
+
+    <label for="waktu">Waktu</label>
+    <input type="text" id="waktu" placeholder="Contoh: 13.00 WIB – Selesai" />
+
+    <label for="tempat">Tempat</label>
+    <input type="text" id="tempat" placeholder="Contoh: Ruang D4" />
+
+    <label for="agenda">Agenda Rapat (pisahkan dengan titik koma)</label>
+    <textarea id="agenda" rows="3" placeholder="Contoh: Pembentukan panitia; Evaluasi kegiatan; Persiapan program kerja baru"></textarea>
+
+    <label for="gaya">Gaya Bahasa</label>
+    <select id="gaya">
+      <option value="formal">Formal dan profesional</option>
+      <option value="santai">Santai tapi sopan</option>
+      <option value="ramah">Ramah dan persuasif</option>
+    </select>
+
+    <label for="media">Media Undangan</label>
+    <select id="media">
+      <option value="WhatsApp">WhatsApp</option>
+      <option value="Email">Email</option>
+      <option value="Poster">Poster Digital</option>
+    </select>
+
+    <label for="emoji">Opsi Tambahan</label>
+    <div class="checkboxes">
+      <label><input type="checkbox" id="emoji" checked /> Tambahkan Emoji</label>
+      <label><input type="checkbox" id="signature" /> Tambahkan Penutup & TTD</label>
+    </div>
+
+    <button onclick="generatePrompt()">🚀 Buat Prompt & Lihat Hasil</button>
+
+    <div id="output"></div>
+    <h3>📝 Preview Undangan:</h3>
+    <div id="preview"></div>
+    <div class="action-buttons">
+      <button onclick="downloadPDF()">📥 Download PDF</button>
+    </div>
+
+    <div class="footer">🌿 Dibuat dengan cinta oleh ChatGPT</div>
+  </div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close-button" onclick="closeModal()">&times;</span>
+      <p id="modalMessage"></p>
+      <button onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    // Get the modal
+    const modal = document.getElementById("myModal");
+    // Get the <p> element that displays the message
+    const modalMessage = document.getElementById("modalMessage");
+
+    // Function to display the modal with a message
+    function showModal(message) {
+      modalMessage.textContent = message;
+      modal.style.display = "flex"; // Use flex to center content
+    }
+
+    // Function to close the modal
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function generatePrompt() {
+      const org = document.getElementById('organisasi').value.trim();
+      const tanggal = document.getElementById('tanggal').value.trim();
+      const waktu = document.getElementById('waktu').value.trim();
+      const tempat = document.getElementById('tempat').value.trim();
+      const gaya = document.getElementById('gaya').value;
+      const media = document.getElementById('media').value;
+      const emoji = document.getElementById('emoji').checked;
+      const signature = document.getElementById('signature').checked;
+      const agendaList = document.getElementById('agenda').value.split(";").map(a => a.trim()).filter(Boolean);
+
+      if (!org || !tanggal || !waktu || !tempat || agendaList.length === 0) {
+        showModal("Mohon isi semua kolom dengan lengkap!");
+        return;
+      }
+
+      const agendaFormatted = agendaList.map((item) => `- ${item}`).join("\n");
+
+      let prompt = `Bertindaklah sebagai sekretaris organisasi.\nSaya ingin membuat undangan rapat ${gaya} untuk dikirim via ${media}:\n\n- Organisasi: ${org}\n- Hari & Tanggal: ${tanggal}\n- Waktu: ${waktu}\n- Tempat: ${tempat}\n- Agenda:\n${agendaFormatted}`;
+
+      if (emoji) prompt += `\nTambahkan emoji yang sesuai (📅 🕒 📍 📌).`;
+      if (signature) prompt += `\nTambahkan penutup formal dan tanda tangan.`;
+      prompt += `\nTeks harus rapi, singkat, mudah dibaca.`;
+
+      document.getElementById("output").textContent = prompt;
+
+      let previewText = emoji ? `📌 ${org}\n\n` : `${org}\n\n`;
+      previewText += `Dengan hormat,\n\nKami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam rapat organisasi berikut ini:\n\n`;
+      previewText += emoji ? `📅 Hari/Tanggal: ${tanggal}\n🕒 Waktu: ${waktu}\n📍 Tempat: ${tempat}\n\n` : `Hari/Tanggal: ${tanggal}\nWaktu: ${waktu}\nTempat: ${tempat}\n\n`;
+      previewText += `📝 Agenda:\n` + agendaList.map(a => `- ${a}`).join("\n") + "\n\n";
+      if (signature) previewText += `Kehadiran Anda sangat kami harapkan.\n\nHormat kami,\nPanitia ${org}`;
+
+      document.getElementById("preview").textContent = previewText;
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const content = document.getElementById("preview").textContent;
+      const lines = doc.splitTextToSize(content, 180);
+      doc.setFont("helvetica", "");
+      doc.setFontSize(12);
+      doc.text(lines, 15, 20);
+      doc.save("Undangan-Rapat.pdf");
+    }
+  </script>
+</body>
+</html>
